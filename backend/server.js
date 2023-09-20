@@ -12,7 +12,7 @@ function normalPort (val) {
     }
 }
 
-const port = normalPort(process.env.Port || 3000);
+const port = normalPort(process.env.Port || 4000);
 app.set('port', port);
 
 function handleError (error) {
