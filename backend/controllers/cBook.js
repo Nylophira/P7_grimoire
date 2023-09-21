@@ -16,6 +16,7 @@ exports.updateAll = (req, res, next) => {
         ...objet, 
         userId: req.auth.userId,
         imageUrl: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`
+        //imageUrl: `${req.protocol}://${req.get('host')}/images/${req.optimImg}`
     })
    unBook.save()
    .then((objets) => res.status(200).json(objets) )
@@ -33,6 +34,8 @@ exports.updateOne = (req, res, next) => {
     const objet = req.file ? 
         {...JSON.parse(req.body.book), imageUrl: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`} :
         {...req.body};
+
+       //{...JSON.parse(req.body.book), imageUrl: `${req.protocol}://${req.get('host')}/images/${req.optimImg}`}
 
     delete objet._userId;
 

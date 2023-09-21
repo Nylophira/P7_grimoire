@@ -1,4 +1,6 @@
 const multer = require("multer");
+const sharp = require("sharp");
+const fs = require("fs");
 
 const mymeType = {
     'image/jpg': 'jpg',
@@ -18,4 +20,27 @@ const stockage = multer.diskStorage({
     }
 })
 
-module.exports = multer({storage:stockage}).single('image');
+const upload = multer({storage:stockage}).single('image');
+
+module.exports = (req, res, next) => {
+    upload (req, res, (err) => {
+        if (err) {
+            return res.status(400).json({message: 'erreur sur Multer'})
+        }
+    //console.log(req.file);
+    const temp = `temp_${req.file.filename}`;
+
+    sharp(req.file.path)
+    .resize({height: 206, width:260, fit: 'contain'})
+    .toFile(`images/${temp}`, (error) => {
+        if(error) {
+            console.log(error);
+            return res.status(500).json({message: 'erreur sur Sharp'})
+        }
+        //req.optimImg = req.file.filename;
+        fs.unlinkSync(req.file.path);
+        fs.renameSync(`images/${temp}`, req.file.path)
+        next() 
+    });
+    });
+}
