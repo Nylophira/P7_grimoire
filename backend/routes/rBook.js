@@ -9,5 +9,6 @@ router.post('/', auth, multer, control.updateAll);
 router.get('/:id', control.readOne);
 router.put('/:id', auth, multer, control.updateOne);
 router.delete('/:id', auth, control.delOne);
+router.post('/:id/rating', auth, control.rating)
 
 module.exports = router;

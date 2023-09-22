@@ -4,7 +4,7 @@ const fs = require("fs");
 exports.readAll = (req, res, next) => {
     book.find()
     .then((objets) => res.status(200).json(objets))
-    .catch((error) =>  res.status(400).json(error))
+    .catch((error) =>  res.status(400).json({error}))
 
 }
 
@@ -16,7 +16,6 @@ exports.updateAll = (req, res, next) => {
         ...objet, 
         userId: req.auth.userId,
         imageUrl: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`
-        //imageUrl: `${req.protocol}://${req.get('host')}/images/${req.optimImg}`
     })
    unBook.save()
    .then((objets) => res.status(200).json(objets) )
@@ -26,7 +25,7 @@ exports.updateAll = (req, res, next) => {
 
 exports.readOne = (req, res, next) => {
     book.findOne({_id: req.params.id})
-    .then((objet) =>  res.status(200).json(objet))
+    .then((objet) =>  {res.status(200).json(objet); /* console.log(objet) */})
     .catch((error) => res.status(400).json({error}))
 }
 
@@ -34,11 +33,8 @@ exports.updateOne = (req, res, next) => {
     const objet = req.file ? 
         {...JSON.parse(req.body.book), imageUrl: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`} :
         {...req.body};
-
-       //{...JSON.parse(req.body.book), imageUrl: `${req.protocol}://${req.get('host')}/images/${req.optimImg}`}
-
     delete objet._userId;
-
+    
     book.findOne({_id: req.params.id})
     .then((unBook) => {
         if(unBook.userId == req.auth.userId) {
@@ -63,9 +59,37 @@ exports.delOne = (req ,res, next) => {
                 .catch((error) => res.status(400).json({error}))
             })
         } else {
-            console.log("pas là ?");
             res.status(401).json({message: 'Non autorisé !'})
         }
     })
     .catch(() => res.status(400).json({message : 'recherche échouée'}))
+}
+
+exports.rating = (req, res, next) => {
+     book.findOne({_id: req.params.id})
+     .then((unBook) => {
+        if(unBook.ratings.includes(req.body.userId)) {
+            res.status(401).json({message: 'Non autorisé !'})
+        } else {
+            //Calcul de la moyenne
+            const nbr = unBook.ratings.length+1;
+            const sum = unBook.ratings.reduce((acc, curr ) => { return acc+curr.grade}, req.body.rating)
+            const average = sum/nbr;
+            console.log(average);
+            const newNote = {userId: req.auth.userId, grade: req.body.rating }
+            //Intégration des résultats
+             book.updateOne({_id: req.params.id}, { averageRating: average, $push: {ratings: newNote}})
+            .then(() => {
+               book.findOne({_id: req.params.id})
+               .then((newBook) =>  res.status(200).json(newBook))
+               .catch((error) => res.status(400).json({error}))
+            })
+            .catch((error) => {res.status(400).json({error}); console.log(req.auth.userId)})
+        }
+     })
+     .catch(() => res.status(400).json({message : 'recherche échouée'}))
+}
+
+exports.bestRating = (req, res, next) => {
+    
 }

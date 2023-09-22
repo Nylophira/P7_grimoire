@@ -8,9 +8,8 @@ module.exports = ((req, res, next) => {
         req.auth = {
             userId: user
         }
-        //console.log(decode);
         next();
     } catch {
-        res.status(401).json({message : 'Non autorisé !'});
+        res.status(403).json({message : 'Non autorisé !'});
     }
 })
