@@ -91,5 +91,13 @@ exports.rating = (req, res, next) => {
 }
 
 exports.bestRating = (req, res, next) => {
-    
+    book.find()
+    .then((objets) => {
+        const notes = Array.from(objets);
+        const trie = notes.sort((a, b)=> b.averageRating-a.averageRating);
+        const top = trie.slice(0,3);
+        res.status(200).json(top); 
+        //verifier que ça fonctionne bien à moins de 3 bouquins
+    })
+    .catch((error) =>  res.status(400).json({error}))
 }
