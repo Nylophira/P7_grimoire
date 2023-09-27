@@ -84,7 +84,7 @@ exports.rating = (req, res, next) => {
                .then((newBook) =>  res.status(200).json(newBook))
                .catch((error) => res.status(400).json({error}))
             })
-            .catch((error) => {res.status(400).json({error}); console.log(req.auth.userId)})
+            .catch((error) => res.status(400).json({error}))
         }
      })
      .catch(() => res.status(400).json({message : 'recherche échouée'}))
