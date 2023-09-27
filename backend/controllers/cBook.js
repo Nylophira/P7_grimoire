@@ -25,7 +25,7 @@ exports.updateAll = (req, res, next) => {
 
 exports.readOne = (req, res, next) => {
     book.findOne({_id: req.params.id})
-    .then((objet) =>  {res.status(200).json(objet); /* console.log(objet) */})
+    .then((objet) =>  res.status(200).json(objet))
     .catch((error) => res.status(400).json({error}))
 }
 
@@ -97,7 +97,6 @@ exports.bestRating = (req, res, next) => {
         const trie = notes.sort((a, b)=> b.averageRating-a.averageRating);
         const top = trie.slice(0,3);
         res.status(200).json(top); 
-        //verifier que ça fonctionne bien à moins de 3 bouquins
     })
     .catch((error) =>  res.status(400).json({error}))
 }
