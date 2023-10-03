@@ -19,7 +19,7 @@ exports.updateAll = (req, res, next) => {
     })
    unBook.save()
    .then((objets) => res.status(200).json(objets) )
-   .catch((error) => res.status(400).json({error}))
+   .catch((error) => res.status(401).json({error}))
 
 }
 
@@ -45,7 +45,7 @@ exports.updateOne = (req, res, next) => {
             res.status(401).json({message: 'Non autorisé !'})
         }
     })
-    .catch(() => res.status(400).json({message : 'Recherche échouée'}))
+    .catch((error) => res.status(400).json({error}))
 }
 
 exports.delOne = (req ,res, next) => {
@@ -62,7 +62,7 @@ exports.delOne = (req ,res, next) => {
             res.status(401).json({message: 'Non autorisé !'})
         }
     })
-    .catch(() => res.status(400).json({message : 'recherche échouée'}))
+    .catch((error) => res.status(400).json({error}))
 }
 
 exports.rating = (req, res, next) => {
@@ -75,7 +75,6 @@ exports.rating = (req, res, next) => {
             const nbr = unBook.ratings.length+1;
             const sum = unBook.ratings.reduce((acc, curr ) => { return acc+curr.grade}, req.body.rating)
             const average = sum/nbr;
-            console.log(average);
             const newNote = {userId: req.auth.userId, grade: req.body.rating }
             //Intégration des résultats
              book.updateOne({_id: req.params.id}, { averageRating: average, $push: {ratings: newNote}})
@@ -84,10 +83,10 @@ exports.rating = (req, res, next) => {
                .then((newBook) =>  res.status(200).json(newBook))
                .catch((error) => res.status(400).json({error}))
             })
-            .catch((error) => res.status(400).json({error}))
+            .catch((error) => res.status(401).json({error}))
         }
      })
-     .catch(() => res.status(400).json({message : 'recherche échouée'}))
+     .catch((error) => res.status(400).json({error}))
 }
 
 exports.bestRating = (req, res, next) => {

@@ -23,9 +23,9 @@ const stockage = multer.diskStorage({
 const upload = multer({storage:stockage}).single('image');
 
 module.exports = (req, res, next) => {
-    upload (req, res, (err) => {
-        if (err) {
-            return res.status(400).json({message: 'erreur sur Multer'})
+    upload (req, res, (error) => {
+        if (error) {
+            return res.status(400).json({error})
         }
         if (req.file)  {
             const temp = `temp_${req.file.filename}`;
@@ -33,8 +33,7 @@ module.exports = (req, res, next) => {
             .resize({height: 350, width:350, fit: 'cover'})
             .toFile(`images/${temp}`, (error) => {
                 if(error) {
-                console.log(error);
-                return res.status(500).json({message: 'erreur sur Sharp'})
+                return res.status(500).json({error})
             }
             fs.unlinkSync(req.file.path);
             fs.renameSync(`images/${temp}`, req.file.path)
