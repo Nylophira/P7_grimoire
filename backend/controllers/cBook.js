@@ -73,7 +73,7 @@ exports.delOne = (req ,res, next) => {
 exports.rating = (req, res, next) => {
      book.findOne({_id: req.params.id})
      .then((unBook) => {
-        if(unBook.ratings.includes(req.body.userId)) {
+        if(unBook.ratings.includes(req.auth.userId)) {
             res.status(401).json({message: 'Non autorisé !'})
         } else {
             //Calcul de la moyenne
