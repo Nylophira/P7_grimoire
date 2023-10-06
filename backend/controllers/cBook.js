@@ -38,6 +38,11 @@ exports.updateOne = (req, res, next) => {
     book.findOne({_id: req.params.id})
     .then((unBook) => {
         if(unBook.userId == req.auth.userId) {
+            //remplacement de l'image
+            if (req.file) {
+                const nomImg = unBook.imageUrl.split('/images/')[1];
+                fs.unlinkSync(`images/${nomImg}`);
+            }
             book.updateOne({_id: req.params.id}, {...objet, _id:req.params.id})
             .then(() => res.status(200).json({message: 'Livre mis à jour'}))
             .catch((error) => res.status(400).json({error}))
