@@ -35,7 +35,6 @@ module.exports = (req, res, next) => {
                 if(error) {
                 return res.status(500).json({error})
             }
-            fs.unlinkSync(req.file.path);
             fs.renameSync(`images/${temp}`, req.file.path)
         });
     }
