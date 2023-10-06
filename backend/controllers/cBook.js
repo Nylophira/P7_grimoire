@@ -79,7 +79,7 @@ exports.rating = (req, res, next) => {
             //Calcul de la moyenne
             const nbr = unBook.ratings.length+1;
             const sum = unBook.ratings.reduce((acc, curr ) => { return acc+curr.grade}, req.body.rating)
-            const average = sum/nbr;
+            const average = Math.round(sum/nbr);
             const newNote = {userId: req.auth.userId, grade: req.body.rating }
             //Intégration des résultats
              book.updateOne({_id: req.params.id}, { averageRating: average, $push: {ratings: newNote}})
